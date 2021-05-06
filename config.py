@@ -260,3 +260,40 @@ def create_renderer(render_opt):
         compositor=compositor,
     )
     return renderer
+
+def create_splatting_renderer():
+    Renderer = get_class_from_string('DSS.core.renderer.SurfaceSplattingRenderer')
+    Raster = get_class_from_string('DSS.core.rasterizer.SurfaceSplatting')
+    # i = render_opt.raster_type.rfind('.')
+    # raster_setting_type = render_opt.raster_type[:i] + \
+    #     '.PointsRasterizationSettings'
+    if render_opt.compositor_type is not None:
+        Compositor = get_class_from_string('pytorch3d.renderer.NormWeightedCompositor')
+        compositor = Compositor()
+    else:
+        compositor = None
+
+    raster_params = {
+        'backface_culling':         False,
+        'Vrk_invariant':            True,
+        'Vrk_isotropic':            False,
+        'bin_size':                 None,
+        'clip_pts_grad':            0.05,
+        'cutoff_threshold':         1.0,
+        'depth_merging_threshold':  0.05,
+        'image_size':               512,
+        'max_points_per_bin':       None,
+        'points_per_pixel':         5,
+        'radii_backward_scaler':    5,
+    }
+
+    # RasterSetting = get_class_from_string(raster_setting_type)
+    RasterSetting = get_class_from_string('DSS.core.rasterizer.PointsRasterizationSettings')
+    raster_settings = RasterSetting(**raster_params)
+
+    renderer = Renderer(
+        rasterizer=Raster(
+            cameras=FoVPerspectiveCameras(), raster_settings=raster_settings),
+        compositor=compositor,
+    )
+    return renderer

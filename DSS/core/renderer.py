@@ -54,7 +54,8 @@ class SurfaceSplattingRenderer(PointsRenderer):
         weights = weights.permute(0, 3, 1, 2)
 
         # from fragments to rgba
-        pts_rgb = point_clouds.features_packed()[:, :3]
+        # pts_rgb = point_clouds.features_packed()[:, :3]
+        pts_rgb = point_clouds.features_packed();
 
         if self.compositor is None:
             # NOTE: weight _splat_points_weights_backward, weighted sum will return
